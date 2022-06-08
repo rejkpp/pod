@@ -1,0 +1,69 @@
+{{ define "head" }}
+<link rel="stylesheet" href='{{ "css/single.css" | absURL }}'>
+{{ end }}
+
+{{ define "main" }}
+<main id="main" class="index">
+  {{ if ne .Section "koers"}}
+  <article class="content center">
+    {{ .Content }}
+  </article>
+  {{ else }}
+  {{ $days := div (sub now.Unix .Lastmod.Unix) 86400 }}
+  <h4>{{ .PublishDate.Format .Site.Params.dateFormat }}
+    {{ if cond (ne .Params.outdated nil) .Params.outdated .Site.Params.outdated.enable }}
+    {{ if gt $days .Site.Params.outdated.limit }}
+    <p>⚠️ oude koersen</p>
+    {{ else if eq $days .Site.Params.outdated.limit}}
+    <p>✅ actuele koersen</p>
+    {{ end }}
+    {{ end }}
+  </h4>
+  {{ if ne .Params.tags nil }}
+  <div>
+    <b>Keywords: </b>
+    {{ range .Params.tags }}
+    <a class="link" href='{{ "tags" | absURL }}/{{ . | urlize }}'>#{{ . }}</a>
+    {{ end }}
+  </div>
+  {{ end }}
+  {{ if cond (ne .Params.toc nil) .Params.toc .Site.Params.toc }}
+  {{ if ne .TableOfContents "<nav id=\"TableOfContents\"></nav>" }}
+  <details>
+    <summary>
+      <b>Table of Contents</b>
+    </summary>
+    <div class="toc">{{ .TableOfContents }}</div>
+  </details>
+  {{ end }}
+  {{ end }}
+  <article class="content center">
+    {{ .Content }}
+  </article>
+  <div class="paginator">
+    {{ if .NextInSection }}
+    <a class="link" href="{{ .NextInSection.Permalink }}"><</a>
+    {{ else }}
+    <a></a>
+    {{ end }}
+    {{ if .PrevInSection }}
+    <a class="link" href="{{ .PrevInSection.Permalink }}">></a>
+    {{ else }}
+    <a></a>
+    {{ end }}
+  </div>
+  <div class="comment">
+    <!-- disqus -->
+    {{ template "_internal/disqus.html" . }}
+    <!-- giscus -->
+    {{ if .Site.Params.giscus.enable }}
+      {{ .Site.Params.giscus.script | safeHTML }}
+    {{ end }}
+    <!-- utterances -->
+    {{ if .Site.Params.utterances.enable }}
+      {{ .Site.Params.utterances.script | safeHTML }}
+    {{ end }}
+  </div>
+  {{ end }}
+</main>
+{{ end }}

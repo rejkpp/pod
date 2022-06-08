@@ -1,0 +1,41 @@
+{{ define "head" }}
+<link rel="stylesheet" href='{{ "css/index.css" | absURL }}'>
+{{ end }}
+
+{{ define "main" }}
+<main id="main" class="index">
+  <span id="cta404">
+    <h1>oeps... deze pagina bestaat niet 🙃</h1>
+  <br>
+    <h2 >
+      voor vragen kun je terecht
+      <br>
+      bij ramiro via
+      <br>
+      whatsapp
+      <br>
+      +597 75 23 23 6
+    </h2>
+    <br>
+    <br>
+    <br>
+  </span>
+  {{ $paginator := .Paginate (where .Site.RegularPages "Type" "==" "koers") }}
+  {{ range first 1 $paginator.Pages }}
+    <h2 class="center">
+      <a href="{{ .Permalink }}">{{ .PublishDate.Format .Site.Params.dateFormat }}</a>
+    </h2>
+    {{ if ne .Params.tags nil }}
+    <div>
+      <b>Keywords: </b>
+      {{ range .Params.tags }}
+      <a class="link" href='{{ "tags" | absURL }}/{{ . | urlize }}'>#{{ . }}</a>
+      {{ end }}
+    </div>
+    {{ end }}
+    <article class="content center">
+      {{ .Content }}
+    </article>
+  {{ end }}
+</main>
+{{ end }}
